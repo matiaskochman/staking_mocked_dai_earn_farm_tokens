@@ -22,3 +22,7 @@ module.exports = {
     }
   }
 }
+
+// truffle migrate --network development --reset
+// truffle exec scripts/issue_tokens.js // called when minting farm tokens 
+// truffle test // to run the mocha tests.
