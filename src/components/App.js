@@ -46,47 +46,52 @@ class App extends Component {
   }
 
   async loadBlockchainData() {
-    const web3 = window.web3;
-    const accounts = await web3.eth.getAccounts();
-    
-    const networkId = await web3.eth.net.getId();
-
-    const daiTokenData = DaiToken.networks[networkId]
-    let daiTokenBalance = 0;
-    let daiToken = null;
-    if(daiTokenData) {
-      daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
-      daiTokenBalance = await daiToken.methods.balanceOf(accounts[0]).call()
+    try {
+      const web3 = window.web3;
+      const accounts = await web3.eth.getAccounts();
+      
+      const networkId = await web3.eth.net.getId();
+  
+      const daiTokenData = DaiToken.networks[networkId]
+      let daiTokenBalance = 0;
+      let daiToken = null;
+      if(daiTokenData) {
+        daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
+        daiTokenBalance = await daiToken.methods.balanceOf(accounts[0]).call()
+      }
+      // this.setState({account: accounts[0], daiToken, daiTokenBalance})
+  
+      const dappTokenData = DappToken.networks[networkId]
+      let dappTokenBalance = 0;
+      let dappToken = null;
+      if(dappTokenData) {
+        dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
+        dappTokenBalance = await dappToken.methods.balanceOf(accounts[0]).call()
+      }
+  
+      const TokenFarmData = TokenFarm.networks[networkId]
+      let tokenFarm;
+      let stakingBalance = 0;
+      if(TokenFarmData) {
+        tokenFarm = new web3.eth.Contract(TokenFarm.abi, TokenFarmData.address);        
+        stakingBalance = await tokenFarm.methods.stakingBalance(accounts[0]).call()
+      }
+  
+      this.setState(
+        {
+          account: accounts[0], 
+          daiToken, 
+          dappToken, 
+          tokenFarm, 
+          daiTokenBalance, 
+          dappTokenBalance, 
+          stakingBalance,
+          loading: false
+        })
+  
+    } catch (error) {
+      console.log(error)
     }
-    // this.setState({account: accounts[0], daiToken, daiTokenBalance})
-
-    const dappTokenData = DappToken.networks[networkId]
-    let dappTokenBalance = 0;
-    let dappToken = null;
-    if(dappTokenData) {
-      dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
-      dappTokenBalance = await dappToken.methods.balanceOf(accounts[0]).call()
-    }
-
-    const TokenFarmData = TokenFarm.networks[networkId]
-    let tokenFarm;
-    let stakingBalance = 0;
-    if(TokenFarmData) {
-      tokenFarm = new web3.eth.Contract(TokenFarm.abi, TokenFarmData.address);
-      stakingBalance = await tokenFarm.methods.stakingBalance(accounts[0]).call()
-    }
-
-    this.setState(
-      {
-        account: accounts[0], 
-        daiToken, 
-        dappToken, 
-        tokenFarm, 
-        daiTokenBalance, 
-        dappTokenBalance, 
-        stakingBalance,
-        loading: false
-      })
 
   }
 
